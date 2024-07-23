@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "fantasy-football"
+name = "fantasy-football-manager"
 version = "0.1.0"
 description = ""
 authors = ["nikerego <nikerego@umich.edu>"]
