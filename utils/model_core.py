@@ -27,7 +27,7 @@ def generate_optimizer_data(data: pd.DataFrame) -> dict:
         'Forward': 3,
     }
     team_size = 15
-    team_budget = 1000
+    team_budget = 100.0
     single_club_max_players = 3
 
     optimizer_data = {
