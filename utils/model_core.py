@@ -37,7 +37,7 @@ def generate_optimizer_data(data: pd.DataFrame) -> dict:
             'PLAYERS': {None: players},
             'team_size': {None: team_size},
             'team_budget': {None: team_budget},
-            'single_club_max_players':{None: single_club_max_players},
+            'single_club_max_players': {None: single_club_max_players},
             'player_prices': player_prices,
             'player_values': player_values,
             'required_players': required_players,
