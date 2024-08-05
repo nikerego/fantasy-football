@@ -32,7 +32,7 @@ team_model.player_prices = pyo.Param(
     team_model.CLUBS,
     team_model.POSITIONS,
     team_model.PLAYERS,
-    domain=pyo.Integers,
+    domain=pyo.NonNegativeReals,
     initialize_as_dense=False,
     name='player_prices',
 )
@@ -42,7 +42,7 @@ team_model.player_values = pyo.Param(
     team_model.CLUBS,
     team_model.POSITIONS,
     team_model.PLAYERS,
-    domain=pyo.Integers,
+    domain=pyo.Reals,
     initialize_as_dense=False,
     name='player_values',
 )
@@ -62,7 +62,7 @@ team_model.team_size = pyo.Param(
 
 # Team budget:
 team_model.team_budget = pyo.Param(
-    domain=pyo.Integers,
+    domain=pyo.NonNegativeReals,
     name='team_budget'
 )
 
@@ -131,7 +131,7 @@ Source: https://fantasy.premierleague.com/help/rules
 """
 
 
-# (1) Total Team Size:
+# (1) Total Team Size: VERIFIED
 def team_size_rule(model: pyo.ConcreteModel) -> pyo.simple_constraint_rule:
     return pyo.summation(model.players_selected) == model.team_size
 
@@ -139,48 +139,48 @@ def team_size_rule(model: pyo.ConcreteModel) -> pyo.simple_constraint_rule:
 team_model.team_size_constraint = pyo.Constraint(rule=team_size_rule)
 
 
-# (2) Appropriate numbers of players in each position:
+# (2) Appropriate numbers of players in each position: VERIFIED
 def required_players_in_positions_rule(
         model: pyo.ConcreteModel,
         position: str,
 ) -> pyo.simple_constraint_rule:
     total_players = 0
     for club in model.CLUBS:
-        for position in model.POSITIONS:
-            for player in model.PLAYERS:
-                try:
-                    total_players += (
-                        model.players_selected[club, position, player]
-                    )
-                except ValueError:
-                    continue
+        for player in model.PLAYERS:
+            try:
+                total_players += (
+                    model.players_selected[club, position, player]
+                )
+            except ValueError:
+                continue
     return total_players == model.required_players[position]
 
 
 team_model.required_players_in_positions_constraint = pyo.Constraint(
-    team_model.PLAYERS,
+    team_model.POSITIONS,
     rule=required_players_in_positions_rule,
 )
 
 
-# (3) Appropriate numbers of players from each club:
+# (3) Appropriate numbers of players from each club: VERIFIED
 def max_players_in_club_rule(
         model: pyo.ConcreteModel,
+        club: str,
 ) -> pyo.simple_constraint_rule:
     total_players = 0
-    for club in model.CLUBS:
-        for position in model.POSITIONS:
-            for player in model.PLAYERS:
-                try:
-                    total_players += (
-                        model.players_selected[club, position, player]
-                    )
-                except ValueError:
-                    continue
-        return total_players <= model.single_club_max_players
+    for position in model.POSITIONS:
+        for player in model.PLAYERS:
+            try:
+                total_players += (
+                    model.players_selected[club, position, player]
+                )
+            except ValueError:
+                continue
+    return total_players <= model.single_club_max_players
 
 
-team_model.max_players_in_position_constraint = pyo.Constraint(
+team_model.max_players_in_club_constraint = pyo.Constraint(
+    team_model.CLUBS,
     rule=max_players_in_club_rule,
 )
 
@@ -203,16 +203,22 @@ def team_budget_rule(
     return team_price <= model.team_budget
 
 
+team_model.team_budget_constraint = pyo.Constraint(
+    rule=team_budget_rule,
+)
+
 concrete_model = team_model.create_instance(sample_data)
 
-concrete_model.pprint()
+# concrete_model.pprint()
 
 # Solve:
 solver = SolverFactory('glpk')
-results = solver.solve(concrete_model)  # tee=True will display solver output
+results = solver.solve(concrete_model)
 
 final_team = {
     p: bool(v)
     for p, v in concrete_model.players_selected.extract_values().items()
     if v == 1
  }
+
+print(final_team)
