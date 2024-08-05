@@ -1,0 +1,21 @@
+services:
+  serve:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    expose:
+      - "8501"
+    entrypoint: [
+      "poetry",
+      "run",
+      "streamlit",
+      "run",
+      "app.py",
+      "--server.address",
+      "0.0.0.0",
+      "--server.port",
+      "8501"
+    ]
+

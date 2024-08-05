@@ -17,6 +17,9 @@ ENV PATH="${PATH}:${POETRY_HOME}/bin"
 # Image Setup:
 RUN apt-get update && apt-get install -yq \
     build-essential \
+    libglpk-dev \
+    coinor-cbc \
+    coinor-libcbc-dev \
     curl
 
 # Poetry Setup:
