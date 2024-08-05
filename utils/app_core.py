@@ -17,6 +17,7 @@ def get_positions_df(data: dict) -> pd.DataFrame:
     }
     positions_df.rename(columns=position_df_column_names, inplace=True)
     positions_df.sort_values(by="position_id", inplace=True)
+    positions_df = positions_df.convert_dtypes()
     return positions_df
 
 
@@ -41,6 +42,7 @@ def get_teams_df(data: dict) -> pd.DataFrame:
     }
     teams_df.rename(columns=teams_df_column_names, inplace=True)
     teams_df.sort_values(by="team_position", inplace=True)
+    teams_df = teams_df.convert_dtypes()
     return teams_df
 
 
@@ -52,6 +54,7 @@ def get_players_df(data: dict) -> pd.DataFrame:
         ['team_id', 'team_position', 'team_name_short', 'team_name']
     ]
     players_df = pd.DataFrame(data.get('elements'))
+    players_df = players_df.convert_dtypes()
     players_df = players_df[[
         'id',
         'first_name',
@@ -172,6 +175,9 @@ def get_players_df(data: dict) -> pd.DataFrame:
         ascending=False,
         inplace=True,
     )
+
+    players_df['player_price'] = players_df['player_price']/10.0
+
     players_df = players_df[[
         'player_id',
         'player_first_name',
