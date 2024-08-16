@@ -21,6 +21,7 @@ with open('.streamlit/styles.css') as f:
 
 st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
+
 @st.cache_data
 def fetch_fpl_data():
     with st.spinner('Making FPL API Request ...'):
@@ -75,3 +76,4 @@ if submit_click:
     st.dataframe(selected_team_df)
     progress_bar.progress(100)
 
+st.sidebar.image('assets/premier-league-2-logo.png', width=150)

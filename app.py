@@ -85,6 +85,7 @@ if submit_click:
     else:
         st.json(response_json)
 
+st.sidebar.image('assets/premier-league-2-logo.png')
 
 if __name__ == '__main__':
     pass
