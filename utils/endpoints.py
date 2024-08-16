@@ -157,5 +157,22 @@ endpoints = {
                        "{team_id}/history/",
             },
         }
-    }
+    },
+    "leagues":
+        {
+            "classic": {
+                "data_included": None,
+                "url": "https://fantasy.premierleague.com/api/"
+                       "leagues-classic/{league_id}/standings/",
+            },
+            "head-to-head": {
+                "data_included": None,
+                "url": "https://fantasy.premierleague.com/api/"
+                       "leagues-h2h-matches/league/{league_id}/",
+            }
+         }
 }
+
+
+if __name__ == "__main__":
+    pass

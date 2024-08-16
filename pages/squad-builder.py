@@ -15,6 +15,12 @@ st.set_page_config(
 )
 
 
+# Inject CSS into the Streamlit app
+with open('.streamlit/styles.css') as f:
+    css = f.read()
+
+st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
 @st.cache_data
 def fetch_fpl_data():
     with st.spinner('Making FPL API Request ...'):
@@ -46,7 +52,7 @@ if submit_click:
     progress_bar.progress(40)
     team_model = model.create_instance(optimizer_input)
     progress_bar.progress(50)
-    solver = SolverFactory('glpk')
+    solver = SolverFactory('cbc')
     results = solver.solve(team_model)
     progress_bar.progress(90)
     final_team = {
@@ -54,15 +60,18 @@ if submit_click:
         for p, v in team_model.players_selected.extract_values().items()
         if v == 1
     }
-    selected_team_df = pd.DataFrame(final_team)
+    selected_team_df = pd.DataFrame(final_team, index=[0]).T
+    selected_team_df.reset_index(inplace=True)
+    selected_team_df.rename(
+        columns={
+            'level_0': 'Club',
+            'level_1': 'Position',
+            'level_2': 'Player',
+            0: 'Selected',
+        },
+        inplace=True,
+    )
+    st.subheader('Fantasy Team')
     st.dataframe(selected_team_df)
     progress_bar.progress(100)
 
-
-
-
-
-# Inject CSS into the Streamlit app
-# with open('.streamlit/styles.css') as f:
-#     css = f.read()
-# st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)

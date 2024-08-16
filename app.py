@@ -15,10 +15,10 @@ st.set_page_config(
     layout="wide",
 )
 
-# Inject CSS into the Streamlit app
-# with open('.streamlit/styles.css') as f:
-#     css = f.read()
-# st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+with open('.streamlit/styles.css') as f:
+    css = f.read()
+
+st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
 
 endpoint = st.sidebar.selectbox('Endpoint', endpoints.keys())
 
@@ -57,9 +57,7 @@ elif endpoint == 'leagues':
 else:
     url = endpoints.get(endpoint).get('url')
 
-
 submit_click = st.sidebar.button('Submit')
-
 if submit_click:
     response = requests.get(url)
     status_code = response.status_code
